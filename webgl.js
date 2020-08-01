@@ -25,18 +25,27 @@ function do_graphics() {
   var mat, geo;
   var pts;
 
-  var len = 30;
+  var psize = 100;
+  for (var grid = -psize; grid <= psize; grid += 10) {
+    line (0x444444,
+	  new THREE.Vector3(grid, -psize, 0),
+	  new THREE.Vector3(grid, psize, 0))
+    line (0x444444,
+	  new THREE.Vector3(-psize, grid, 0),
+	  new THREE.Vector3(psize, grid, 0))
+  }
+
   line(0xff0000, 
        new THREE.Vector3(0, 0, 0),
-       new THREE.Vector3(len, 0, 0))
+       new THREE.Vector3(psize, 0, 0))
 
   line(0x00ff00, 
        new THREE.Vector3(0, 0, 0),
-       new THREE.Vector3(0, len, 0))
+       new THREE.Vector3(0, psize, 0))
 
   line(0x0000ff, 
        new THREE.Vector3(0, 0, 0),
-       new THREE.Vector3(0, 0, len))
+       new THREE.Vector3(0, 0, psize))
 
 
 
