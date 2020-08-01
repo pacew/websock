@@ -38,6 +38,10 @@ async def serve_scripts(req):
     val = open("scripts.js").read()
     return web.Response(text=val, content_type='application/javascript')
 
+async def serve_webgl(req):
+    val = open("webgl.js").read()
+    return web.Response(text=val, content_type='application/javascript')
+
 async def serve_style(req):
     val = open("style.css").read()
     return web.Response(text=val, content_type='text/css')
@@ -54,6 +58,7 @@ async def web_server():
     app = web.Application()
     app.router.add_get('/', serve_index)
     app.router.add_get('/scripts.js', serve_scripts)
+    app.router.add_get('/webgl.js', serve_webgl)
     app.router.add_get('/style.css', serve_style)
     app.router.add_get('/ws', websocket_handler)
 

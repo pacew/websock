@@ -11,7 +11,6 @@ function get_secs() {
 function handle_msg(ev) {
   last_msg = get_secs();
   var msg = JSON.parse(ev.data);
-  console.log(msg)
 }
 
 function maintain_connection() {
