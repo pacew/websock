@@ -1,0 +1,11 @@
+#websocket_status {
+    color: red;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    border: 2px solid red;
+    text-align: center;
+    padding: 1ex 1em;
+    background: #fdd;
+}
+
