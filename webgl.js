@@ -16,10 +16,6 @@ function dtor(x) {
   return (x/360.0 * 2 * Math.PI);
 }
 
-function set_ang(link, ang) {
-  link.mesh.rotateOnAxis(link.axis, ang);
-}
-
 function make_seg(color, xsize, ysize, zsize) {
   var geo = new THREE.Geometry();
   
@@ -59,7 +55,7 @@ function make_seg(color, xsize, ysize, zsize) {
   return (mesh);
 }
 
-function make_link (parent, color, size, size2, axis) {
+function make_link (parent, color, size, size2, axis, ang_offset) {
   var link = {}
   link.parent = parent;
   link.ang = 0;
@@ -68,13 +64,25 @@ function make_link (parent, color, size, size2, axis) {
   link.mesh = make_seg (color, size2, size2, link.size);
   link.end = link.mesh.matrix.clone();
   link.end.multiply (new THREE.Matrix4().makeTranslation(0, 0, link.size));
+
   if (parent) {
     link.mesh.applyMatrix4(link.parent.end);
     parent.mesh.add(link.mesh);
   }
+
+  link.m = link.mesh.matrix.clone();
+
+  link.ang_offset = ang_offset;
+
   links.push(link);
   return (link);
 }
+
+function set_ang(link, ang) {
+  link.mesh.setRotationFromMatrix(link.m);
+  link.mesh.rotateOnAxis(link.axis, ang + link.ang_offset);
+}
+
 
 function do_graphics() {
   var renderer = new THREE.WebGLRenderer();
@@ -85,7 +93,7 @@ function do_graphics() {
   var camera = new THREE.PerspectiveCamera( 
     45, window.innerWidth / window.innerHeight, .010, 10);
   camera.up.set (0, 0, 1);
-  camera.position.set(-2, -0.5, 1);
+  camera.position.set(-1.5, -1.5, 1);
   camera.lookAt(0, 0, .5);
 
   scene = new THREE.Scene();
@@ -137,21 +145,45 @@ function do_graphics() {
   var r = 0.050;
   var geo, mat, link, prev, m;
 
-  var base = make_link (null, 0xff0000, .4, .1, new THREE.Vector3(0, 0, 1));
+  var base = make_link (null, 0xff0000, 
+			.4, .1, 
+			new THREE.Vector3(0, 0, 1),
+			dtor(0));
   scene.add(base.mesh);
 
-  link = make_link (base, 0x00ff00, .560, .050, new THREE.Vector3(0, 1, 0));
-  link = make_link (link, 0x0000ff, .40, .050, new THREE.Vector3(0, 1, 0));
+  link = make_link (base, 0x00ff00, 
+		    .560, .050, 
+		    new THREE.Vector3(0, 1, 0),
+		    dtor(90));
+  link = make_link (link, 0xffff00, 
+		    .250, .050, 
+		    new THREE.Vector3(0, 1, 0),
+		    dtor(0));
+  link = make_link (link, 0x00ffff, 
+		    .250, .040, 
+		    new THREE.Vector3(0, 0, 1),
+		    dtor(0));
+  link = make_link (link, 0xff00ff, 
+		    .090, .020, 
+		    new THREE.Vector3(0, 1, 0),
+		    dtor(0));
+  link = make_link (link, 0xffffff, 
+		    .010, .050, 
+		    new THREE.Vector3(0, 1, 0),
+		    dtor(0));
+  
+  set_ang (links[0], dtor(0));
+  set_ang (links[1], dtor(-90));
+  set_ang (links[2], dtor(90));
+  set_ang (links[3], dtor(0));
+  set_ang (links[4], dtor(-90));
 
-  set_ang (links[0], dtor(-20));
-  set_ang (links[1], dtor(-20));
-  set_ang (links[2], dtor(20));
-
+  var ang = 0;
   var animate = function () {
     requestAnimationFrame( animate );
     
-    //link1.mesh.rotation.z += 0.02;
-    //link2.mesh.rotation.z += 0.01;
+    ang += dtor(1);
+    set_ang(links[3], ang);
     
     renderer.render( scene, camera );
   };
